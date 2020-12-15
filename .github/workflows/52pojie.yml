@@ -28,11 +28,11 @@ jobs:
         with:
           node-version: 14.x
       - name: npm install
-        if: env.YOUTH_HEADER
+        if: env.KS_TOKEN
         run: |
           npm install
       - name: '运行 【52pojie】'
-        if: env.YOUTH_HEADER
+        if: env.KS_TOKEN
         run: |
           node Task/52pojie.js
           node Task/kuaishou.js
