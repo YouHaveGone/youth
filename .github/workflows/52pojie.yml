@@ -32,7 +32,7 @@ jobs:
           npm install
       - name: '运行 【52pojie】'
         run: |
-          node Task/52pojie1.js
+          node Task/52pojie.js
           node Task/kuaishou.js
         env:
           YOUTH_NOTIFY_CONTROL: ${{ secrets.YOUTH_NOTIFY_CONTROL }}
