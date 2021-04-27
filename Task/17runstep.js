@@ -1,5 +1,6 @@
 /*　　　　　　　　　　
 说明详情请见：https://raw.githubusercontent.com/CenBoMin/GithubSync/main/RUNSTEP/readme.js
+https://runstep.kujievip.com/runstep/getrobot?
 */
 const jsname = '👟走路赚钱'
 const $ = Env(jsname)
@@ -9,10 +10,8 @@ const logs = 0;
 const notifyInterval = 1;
 //通知风格
 let tz = '';
-let version = $.getval('version') || "1.5.1"; //APP版本号,更新请到APP更改
+let version = $.getval('version') || "1.5.2"; //APP版本号,更新请到APP更改
 
-let max = 60;
-let min = 40;
 //////////////////////////////////////////////////////////////////
 //hour&min
 var hour = '';
@@ -42,35 +41,23 @@ let runstepkeyVal = "";
 
 
 if ($.isNode()) {
+  Object.keys(runsteptokenVal).forEach((item) => {
+    if (runsteptokenVal[item]) {
+      runsteptokenArr.push(runsteptokenVal[item])
+    }
+  });
 
-  if (process.env.RUNSTEP_TOKEN && process.env.RUNSTEP_TOKEN.split('\n').length > 0) {
-     runsteptokenVal = process.env.RUNSTEP_TOKEN.split('\n');
-    } else  {
-     runsteptokenVal = process.env.RUNSTEP_TOKEN.split()
-    };
-  if (process.env.RUNSTEP_KEY && process.env.RUNSTEP_KEY.split('\n').length > 0) {
-     runstepkeyVal = process.env.RUNSTEP_KEY.split('\n');
-    } else  {
-     runstepkeyVal = process.env.RUNSTEP_KEY.split()
-    };
-
-    Object.keys(runsteptokenVal).forEach((item) => {
-      if (runsteptokenVal[item]) {
-        runsteptokenArr.push(runsteptokenVal[item])
-      }
-    });
-
-    Object.keys(runstepkeyVal).forEach((item) => {
-      if (runstepkeyVal[item]) {
-        runstepkeyArr.push(runstepkeyVal[item])
-      }
-    });
+  Object.keys(runstepkeyVal).forEach((item) => {
+    if (runstepkeyVal[item]) {
+      runstepkeyArr.push(runstepkeyVal[item])
+    }
+  });
 
 } else {
   runsteptokenArr.push($.getdata('runsteptoken'));
   runstepkeyArr.push($.getdata('runstepkey'));
   // 根据boxjs中设置的额外账号数，添加存在的账号数据进行任务处理
-  let Count = ($.getval('Count') || '1') - 0;
+  let Count = ($.getval('runstepCount') || '1') - 0;
   for (let i = 2; i <= Count; i++) {
     if ($.getdata(`runsteptoken${i}`)) {
       runsteptokenArr.push($.getdata(`runsteptoken${i}`));
@@ -83,11 +70,10 @@ if ($.isNode()) {
 
 !(async () => {
   cc = (`${jsname}任务执行通知🔔`);
-  if (!runsteptokenArr[0]) {
+  if (typeof $.getdata('runsteptoken') === "undefined") {
     console.log($.name, '【提示】请先前往获取cookie📲')
     return;
   }
-  $.msg('现在时间为'+hour+':'+minute)
   console.log(`\n✅ 检查共有多少个账号。。。`)
   await $.wait(4000)
   console.log(`👥 本次执行共${runsteptokenArr.length}个账号`)
@@ -116,7 +102,7 @@ function showmsg1() {
 async function showmsg2() {
   if (notifyInterval == 1) {
     if ($.isNode()) {
-      if ((hour == 12 ) || (hour == 23 )) {
+      if ((hour == 8 && minute <= 5) || (hour == 12 && minute <= 5) || (hour == 23 && minute <= 5)) {
         await notify.sendNotify($.name, tz)
       }
     } else {
@@ -130,50 +116,35 @@ async function showmsg2() {
 }
 //////////////////////////////////////////////////////////////////
 async function runstepapp() {
-  random = Math.floor(Math.random()*(max-min+1)+min)*1000
-  console.log(random);
-  await $.wait(random);
   console.log(`\n🇨🇳【开始首页签到任务】`)
   await index();
-  random = Math.floor(Math.random()*(max-min+1)+min)*1000
-  console.log(random);
-  await $.wait(random);
   console.log(`\n🇨🇳【开始赚步数任务】`)
   await steptomoney();
   await getharvest();
   //console.log(`\n🇨🇳【开始福利中心任务】`)
-  //await center();
-  random = Math.floor(Math.random()*(max-min+1)+min)*1000
-  console.log(random);
-  await $.wait(random);
+  await center();
   console.log(`\n1️⃣开始🎡幸运转盘🎡任务`)
   //await advlist();
   await wheelindex()
-  random = Math.floor(Math.random()*(max-min+1)+min)*1000
-  console.log(random);
-  await $.wait(random);
   console.log(`\n2️⃣开始🤘摇一摇🤘任务`)
   await shakeindex();
-  random = Math.floor(Math.random()*(max-min+1)+min)*1000
-  console.log(random);
-  await $.wait(random);
   console.log(`\n3️⃣开始🎫刮一刮🎫任务`)
   await gglindex();
 
   await runstepend();
-  //console.log(`\n🇨🇳【开始提现任务】`)
-  //console.log(`👧请使用专门的提现脚本,每天提现0.3元`)
+  console.log(`\n🇨🇳【开始提现任务】`)
+  console.log(`👧请使用专门的提现脚本,每天提现0.3元`)
 
 }
 ///////////////////////////【收尾】//////////////////////////////////
 async function runstepend(){
   if(wheeltotalnum >= 7 && shaketotalnum >= 7 && ggltotalnum >= 20){
     console.log(`\n🔂开始🔥燃尽模式🔥任务`)
-    await $.wait(18000)
+    await $.wait(8000)
     await wheelincr();
-    await $.wait(18000)
+    await $.wait(8000)
     await shakeincr();
-    await $.wait(18000)
+    await $.wait(8000)
     await gglincr();
   }
 }
@@ -203,7 +174,7 @@ async function index() {
             usercash = data.data.user.money
             $.log(`\n🔸用户信息`);
             $.log(`【用户名】:${data.data.user.nickname}`);
-            //$.log(`【余额】:¥${data.data.user.money}`);
+            $.log(`【余额】:¥${data.data.user.money}`);
             $.log(`【健康币】:$${data.data.user_detail.jkb}🏅`);
             $.log(`【步数】:${data.data.user_detail.step}👣`);
             $.log(`\n🙇查询签到状态`);
@@ -335,7 +306,7 @@ async function steptomoney() {
             $.log(`\n🙇‍♂️查询状态`);
             $.log(`【未收取步数】:${data.data.unreceived_steps}`);
 
-            if (autostep == 0) {
+            if (goldcard == 0) {
               $.log(`【自动收取】:未启用✖️,请前往APP观看广告`);
             } else {
               $.log(`【自动收取】:启用中✔️`);
@@ -346,7 +317,7 @@ async function steptomoney() {
             } else {
               $.log(`【财神加成】:启用中✔️`);
             }
-            if (speedcard == 0) {
+            if (goldcard == 0) {
               $.log(`【加速加成】:未启用✖️,请前往APP观看广告`);
             } else {
               $.log(`【加速加成】:启用中✔️`);
@@ -452,12 +423,12 @@ async function center() {
             if (logs == 1) $.log(data)
             //$.log(data)
             data = JSON.parse(data);
-            $.log(`\n🙇‍♂️查询当前任务状态`);
-            for (centerlist of data.data.redpackets) {
-              centername = centerlist.title;
-              centerstatus = centerlist.status;
-              $.log(`【${centername}】:${centerstatus}`);
-            }
+            //$.log(`\n🙇‍♂️查询当前任务状态`);
+            //for (centerlist of data.data.redpackets) {
+              //centername = centerlist.title;
+              //centerstatus = centerlist.status;
+              //$.log(`【${centername}】:${centerstatus}`);
+            //}
           }
         }
       } catch (e) {
@@ -517,8 +488,7 @@ async function wheelindex() {
               }
             }
             if(wheeltotalnum <= 8){
-              $.log(`\n👧跳过兑换幸运转盘,进行下一个任务...\n`);
-              //await wheelincr();
+              await wheelincr();
             }else{
               $.log(`\n👧幸运转盘已达红包上限,进行下一个任务...\n`);
             }
@@ -1015,8 +985,7 @@ async function gglindex() {
             }
             await ggledlist();
             if(ggltotalnum <= 21){
-              $.log(`👧跳过兑换抽奖机会...\n`);
-              //await gglincr();
+              await gglincr();
             }else{
               $.log(`👧摇一摇已达红包上限,进行下一个任务...\n`);
             }
